@@ -29,10 +29,15 @@ EXPOSE 5000
 # Keeps Python from generating .pyc files in the container
 ENV PYTHONDONTWRITEBYTECODE=1
 
+ENV LC_ALL=C.UTF-8
+ENV LANG=C.UTF-8
+
 # Turns off buffering for easier container logging
 ENV PYTHONUNBUFFERED=1
 
-RUN pip3 install --upgrade setuptools
+RUN python3 -m pip install -U pip
+RUN python3 -m pip install -U setuptools
+# RUN pip3 install --upgrade setuptools
 
 # Install pip requirements
 COPY requirements_inference.txt .
@@ -47,4 +52,5 @@ RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /
 USER appuser
 
 # During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "1500", "flask_app:app"]
+# CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "1500", "flask_app:app"]
+# CMD ["celery", "-A",  "tasks",  "worker",  "--loglevel=INFO"]
