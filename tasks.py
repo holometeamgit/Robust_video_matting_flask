@@ -4,11 +4,15 @@ from botocore.config import Config
 import datetime
 import json
 from utils.s3_strorage_service import S3StorageService
+from settings import AWS_ACCESS_KEY_ID,\
+                        AWS_SECRET_ACCESS_KEY,\
+                        AWS_STORAGE_BUCKET_NAME_AR_MESSAGES_SOURCE,\
+                        AWS_STORAGE_BUCKET_NAME_AR_MESSAGES,\
+                        AWS_QUEUE_NAME
 
-ACCESS_KEY = 'AKIA2VJEQIYYTAXFMGWN'
-SECRET_KEY = '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'
-AWS_STORAGE_BUCKET_NAME_AR_MESSAGES_SOURCE = 'dev.ar-messages-source'
-AWS_STORAGE_BUCKET_NAME_AR_MESSAGES = 'dev.ar-messages-processed'
+ACCESS_KEY = AWS_ACCESS_KEY_ID
+SECRET_KEY = AWS_SECRET_ACCESS_KEY
+
 app = Celery('videomatting', broker='pyamqp://guest:guest@rabbit:5672/')
 
 
@@ -28,7 +32,7 @@ sqs = boto3.resource('sqs',
     aws_secret_access_key=SECRET_KEY,
     config=my_config
     )
-queue = sqs.get_queue_by_name(QueueName='g_dev_local')
+queue = sqs.get_queue_by_name(QueueName=AWS_QUEUE_NAME)
 
 @app.task
 def check_queue(arg):

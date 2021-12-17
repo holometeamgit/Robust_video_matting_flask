@@ -4,7 +4,10 @@ import os
 from secrets import token_hex
 
 import boto3
-from django.conf import settings
+from settings import AWS_S3_ENDPOINT_URL, \
+                        AWS_ACCESS_KEY_ID, \
+                        AWS_SECRET_ACCESS_KEY # , \
+                        # S3_BUCKET_NAME
 
 
 class StorageFile:
@@ -20,15 +23,15 @@ class S3StorageService:
         self.bucket_name = bucket_name
         self.s3 = boto3.resource(
             's3',
-            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+            endpoint_url=AWS_S3_ENDPOINT_URL,
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY
         )
         self.client = boto3.client(
             's3',
-            endpoint_url=settings.AWS_S3_ENDPOINT_URL,
-            aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
-            aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY
+            endpoint_url=AWS_S3_ENDPOINT_URL,
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_ACCESS_KEY
         )
         self.bucket = self.s3.Bucket(bucket_name)
 
@@ -67,8 +70,8 @@ class S3StorageService:
             return len(file_obj)
         return -1
 
-    def delete(self, file_key: str) -> None:
-        self.s3.Object(settings.S3_BUCKET_NAME, file_key).delete()
+    # def delete(self, file_key: str) -> None:
+    #     self.s3.Object(S3_BUCKET_NAME, file_key).delete()
 
     def upload_public_read(self, file_obj, file_name: str, s3_key=None) -> StorageFile:
         return self.upload(file_obj, s3_key, file_name, public=True)
