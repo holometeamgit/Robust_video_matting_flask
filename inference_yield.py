@@ -66,7 +66,7 @@ def convert_video(input_source: str,
     assert seq_chunk >= 1, 'Sequence chunk must be >= 1'
     assert num_workers >= 0, 'Number of workers must be >= 0'
 
-    yield "Video uploaded"
+    # yield "Video uploaded"
 
     os.makedirs(output_dir, exist_ok=True)
     seg_composition = os.path.join(output_dir, "seg.mp4")
@@ -133,7 +133,7 @@ def convert_video(input_source: str,
             person_frg = torch.tensor([192, 128, 128], device=device, dtype=dtype).div(255).view(1, 1, 3, 1, 1)
             black_bgr = torch.tensor([0, 0, 0], device=device, dtype=dtype).div(255).view(1, 1, 3, 1, 1)
 
-    yield "0/" + str(len(source))
+    # yield "0/" + str(len(source))
 
     try:
         with torch.no_grad():
@@ -166,7 +166,7 @@ def convert_video(input_source: str,
                     writer_com.write(com[0])
 
                 current_frame_index = current_frame_index + src.size(1)
-                yield str(current_frame_index) + "/" + str(len(source))
+                yield current_frame_index, + len(source)
                 bar.update(src.size(1))
 
     finally:
@@ -180,7 +180,7 @@ def convert_video(input_source: str,
         if output_foreground is not None:
             writer_fgr.close()
 
-    yield "file url:  " + server_uri + output_composition
+    yield current_frame_index, + len(source)
 
 
 def auto_downsample_ratio(h, w):
