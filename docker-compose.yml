@@ -9,8 +9,6 @@ services:
     command: celery -A tasks worker -l info -B
     ports:
       - 5000:5000
-    depends_on:
-      - rabbit
 
   rabbit:
     image: rabbitmq:3.9.11-management-alpine
