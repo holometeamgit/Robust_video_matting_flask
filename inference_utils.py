@@ -9,6 +9,15 @@ from PIL import Image
 
 class VideoReader(Dataset):
     def __init__(self, path, transform=None):
+        self.container = av.open(path)
+
+        self.rotation = 0
+        rotate_metadata = self.container.streams.video[0].metadata.get('rotate')
+        if rotate_metadata is not None:
+            self.rotation = int(rotate_metadata)
+
+        print("Rotate {0}".format(str(self.rotation)))
+
         self.video = pims.PyAVVideoReader(path)
         self.rate = self.video.frame_rate
         self.transform = transform
@@ -29,7 +38,7 @@ class VideoReader(Dataset):
 
 
 class VideoWriter:
-    def __init__(self, path, frame_rate, bit_rate=1000000):
+    def __init__(self, path, frame_rate, rotation, bit_rate=1000000):
         self.container = av.open(path, mode='w')
         self.stream = self.container.add_stream('h264', rate=round(frame_rate))
         self.stream.pix_fmt = 'yuv420p'
