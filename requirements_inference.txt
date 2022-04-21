@@ -7,3 +7,4 @@ celery==4.4.0
 boto3==1.20.23
 botocore==1.23.23
 ffmpeg-python==0.2.0
+
