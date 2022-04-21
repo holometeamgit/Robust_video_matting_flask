@@ -22,7 +22,7 @@ from model import MattingNetwork
 
 from inference_utils import VideoReader, VideoWriter, ImageSequenceReader, ImageSequenceWriter
 
-from extract_audio_to_video import ext_a_to_v
+from video_utils import video_correction
 
 def convert_video(input_source: str,
                   output_dir="content/output_1",
@@ -99,21 +99,25 @@ def convert_video(input_source: str,
             writer_com = VideoWriter(
                 path=output_composition_tmp,
                 frame_rate=frame_rate,
+                rotation = source.rotation,
                 bit_rate=int(output_video_mbps * 1000000))
             if generate_seg_video:
                 writer_seg = VideoWriter(
                     path=seg_composition,
                     frame_rate=frame_rate,
+                    rotation=source.rotation,
                     bit_rate=int(output_video_mbps * 1000000))
         if output_alpha is not None:
             writer_pha = VideoWriter(
                 path=output_alpha,
                 frame_rate=frame_rate,
+                rotation=source.rotation,
                 bit_rate=int(output_video_mbps * 1000000))
         if output_foreground is not None:
             writer_fgr = VideoWriter(
                 path=output_foreground,
                 frame_rate=frame_rate,
+                rotation=source.rotation,
                 bit_rate=int(output_video_mbps * 1000000))
     else:
         if output_composition is not None:
@@ -184,7 +188,7 @@ def convert_video(input_source: str,
             writer_fgr.close()
 
     # sync audio and video
-    ext_a_to_v(input_source, output_composition_tmp, output_composition)
+    video_correction(input_source, output_composition_tmp, source.rotation, output_composition)
 
     # return final result for downloading
     yield "file url:  " + server_uri + output_composition
