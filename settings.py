@@ -6,4 +6,4 @@ AWS_S3_ENDPOINT_URL = None
 AWS_STORAGE_BUCKET_NAME_AR_MESSAGES_SOURCE = 'dev.ar-messages-source'
 AWS_STORAGE_BUCKET_NAME_AR_MESSAGES = 'dev.ar-messages-processed'
 
-AWS_QUEUE_NAME = 'g_dev_local'
+AWS_QUEUE_NAME = 'g_dev_local' # 'prod-armessage-std'

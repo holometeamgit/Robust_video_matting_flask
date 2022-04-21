@@ -1,5 +1,6 @@
 # For more information, please refer to https://aka.ms/vscode-docker-python
 FROM ubuntu:18.04
+# FROM nvidia/cuda:9.2-base-ubuntu18.04
 
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:jonathonf/ffmpeg-4
@@ -22,7 +23,8 @@ libavutil-dev \
 libswscale-dev \
 libswresample-dev \
 libavfilter-dev \
-software-properties-common
+software-properties-common \
+linux-headers-$(uname -r)
 
 EXPOSE 5000
 

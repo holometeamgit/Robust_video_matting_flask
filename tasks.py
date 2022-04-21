@@ -18,6 +18,7 @@ ACCESS_KEY = AWS_ACCESS_KEY_ID
 SECRET_KEY = AWS_SECRET_ACCESS_KEY
 
 app = Celery('videomatting', broker='pyamqp://guest:guest@rabbit:5672/')
+# app = Celery('videomatting', broker='pyamqp://guest:guest@127.0.0.1:5672/')
 logger = logging.getLogger(__name__)
 
 @app.on_after_configure.connect
@@ -26,7 +27,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 my_config = Config(
-    region_name='us-east-1',
+    region_name='us-east-1', # region_name='eu-west-2',
     signature_version='v4',
 )
 
