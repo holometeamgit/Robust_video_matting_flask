@@ -51,7 +51,7 @@ def upload_file():
                                output_composition='output.mp4',  # output file name
                                output_video_mbps=4,              # Output video mbps.
                                downsample_ratio=None,            # A hyperparameter to adjust or use None for auto.
-                               seq_chunk=12,                     # Frames chunk
+                               seq_chunk=1,                      # Frames chunk
                                server_uri=server_uri_var,        # current server uri, required for full output link
                                generate_seg_video=True)          # required to save video for ML Dataset
 
