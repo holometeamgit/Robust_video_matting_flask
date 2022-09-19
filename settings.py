@@ -6,4 +6,17 @@ AWS_S3_ENDPOINT_URL = None
 AWS_STORAGE_BUCKET_NAME_AR_MESSAGES_SOURCE = 'dev.ar-messages-source'
 AWS_STORAGE_BUCKET_NAME_AR_MESSAGES = 'dev.ar-messages-processed'
 
-AWS_QUEUE_NAME = 'g_dev_local' # 'prod-armessage-std'
+if True:
+    AWS_QUEUE_NAME = 'prod-armessage-std'
+
+    GPU_ENABLED = True
+    CELERY_BROKER = 'pyamqp://guest:guest@127.0.0.1:5672/'
+
+    CONFIG_REGION = 'eu-west-2'
+else:
+    AWS_QUEUE_NAME = 'g_dev_local'
+
+    GPU_ENABLED = False
+    CELERY_BROKER = 'pyamqp://guest:guest@rabbit:5672/'
+
+    CONFIG_REGION = 'us-east-1'

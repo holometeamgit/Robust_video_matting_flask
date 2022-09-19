@@ -26,4 +26,4 @@ def video_correction(video_source, audio_source, rotation, av_result):
         #     video_out = stream_out.video.filter("transpose", 2).filter("transpose", 2)
 
     out = ffmpeg.output(video_out, audio_in, av_result, **{'q:v': 0})
-    out.run()
+    out.global_args('-y').run()

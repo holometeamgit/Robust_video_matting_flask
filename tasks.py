@@ -12,13 +12,15 @@ from settings import AWS_ACCESS_KEY_ID,\
                         AWS_SECRET_ACCESS_KEY,\
                         AWS_STORAGE_BUCKET_NAME_AR_MESSAGES_SOURCE,\
                         AWS_STORAGE_BUCKET_NAME_AR_MESSAGES,\
-                        AWS_QUEUE_NAME
+                        AWS_QUEUE_NAME,\
+                        CELERY_BROKER,\
+                        CONFIG_REGION
 
 ACCESS_KEY = AWS_ACCESS_KEY_ID
 SECRET_KEY = AWS_SECRET_ACCESS_KEY
 
-app = Celery('videomatting', broker='pyamqp://guest:guest@rabbit:5672/')
-# app = Celery('videomatting', broker='pyamqp://guest:guest@127.0.0.1:5672/')
+app = Celery('videomatting', broker=CELERY_BROKER)
+
 logger = logging.getLogger(__name__)
 
 @app.on_after_configure.connect
@@ -27,7 +29,7 @@ def setup_periodic_tasks(sender, **kwargs):
 
 
 my_config = Config(
-    region_name='us-east-1', # region_name='eu-west-2',
+    region_name=CONFIG_REGION,
     signature_version='v4',
 )
 
@@ -77,7 +79,7 @@ def check_queue(arg):
                                 output_composition=f'processed__{src_s3_key}',  # output file name
                                 output_video_mbps=4,              # Output video mbps.
                                 downsample_ratio=None,            # A hyperparameter to adjust or use None for auto.
-                                seq_chunk=12,                     # Frames chunk
+                                seq_chunk=1,                     # Frames chunk
                                 server_uri='https://beem.me',        # current server uri, required for full output link
                                 generate_seg_video=True)
                     for i, total in generator:

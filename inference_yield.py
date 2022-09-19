@@ -14,6 +14,7 @@ python inference.py \
 
 import torch
 import os
+import gc
 from torch.utils.data import DataLoader
 from torchvision import transforms
 from typing import Optional, Tuple
@@ -24,6 +25,7 @@ from inference_utils import VideoReader, VideoWriter, ImageSequenceReader, Image
 from extract_audio_to_video import ext_a_to_v
 
 from video_utils import video_correction
+from settings import GPU_ENABLED
 
 def convert_video(input_source: str,
                   output_dir="content/output_1",
@@ -60,7 +62,11 @@ def convert_video(input_source: str,
         device: Only need to manually provide if model is a TorchScript freezed model.
         dtype: Only need to manually provide if model is a TorchScript freezed model.
     """
-    model = MattingNetwork('mobilenetv3').eval()  # .cuda()  # or "resnet50"
+    model = None
+    if GPU_ENABLED:
+        model = MattingNetwork('mobilenetv3').eval()
+    else:
+        model = MattingNetwork('mobilenetv3').eval.cuda()
     model.load_state_dict(torch.load('rvm_mobilenetv3.pth'))
 
     assert downsample_ratio is None or (downsample_ratio > 0 and downsample_ratio <= 1), 'Downsample ratio must be between 0 (exclusive) and 1 (inclusive).'
@@ -175,6 +181,8 @@ def convert_video(input_source: str,
 
                 current_frame_index = current_frame_index + src.size(1)
                 yield current_frame_index, + len(source)
+                if GPU_ENABLED:
+                    torch.cuda.empty_cache()
                 bar.update(src.size(1))
 
     finally:
@@ -188,11 +196,17 @@ def convert_video(input_source: str,
         if output_foreground is not None:
             writer_fgr.close()
 
+    del model
+    if GPU_ENABLED:
+        torch.cuda.empty_cache()
     # sync audio and video
     video_correction(input_source, output_composition_tmp, source.rotation, output_composition)
 
     yield current_frame_index, + len(source)
-
+    if GPU_ENABLED:
+        torch.cuda.empty_cache()
+    gc.collect()
+    yield "Clean"
 
 
 def auto_downsample_ratio(h, w):
