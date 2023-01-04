@@ -22,7 +22,6 @@ from tqdm.auto import tqdm
 from model import MattingNetwork
 
 from inference_utils import VideoReader, VideoWriter, ImageSequenceReader, ImageSequenceWriter
-from extract_audio_to_video import ext_a_to_v
 
 from video_utils import video_correction
 from settings import GPU_ENABLED
@@ -64,9 +63,9 @@ def convert_video(input_source: str,
     """
     model = None
     if GPU_ENABLED:
-        model = MattingNetwork('mobilenetv3').eval()
+        model = MattingNetwork('mobilenetv3').eval().cuda()
     else:
-        model = MattingNetwork('mobilenetv3').eval.cuda()
+        model = MattingNetwork('mobilenetv3').eval()
     model.load_state_dict(torch.load('rvm_mobilenetv3.pth'))
 
     assert downsample_ratio is None or (downsample_ratio > 0 and downsample_ratio <= 1), 'Downsample ratio must be between 0 (exclusive) and 1 (inclusive).'
@@ -135,7 +134,10 @@ def convert_video(input_source: str,
             writer_fgr = ImageSequenceWriter(output_foreground, 'png')
 
     # Inference
-    model = model.eval()
+    if GPU_ENABLED:
+        model = model.cuda().eval()
+    else:
+        model = model.eval()
     if device is None or dtype is None:
         param = next(model.parameters())
         dtype = param.dtype
@@ -206,7 +208,7 @@ def convert_video(input_source: str,
     if GPU_ENABLED:
         torch.cuda.empty_cache()
     gc.collect()
-    yield "Clean"
+    # yield current_frame_index, + len(source)
 
 
 def auto_downsample_ratio(h, w):
